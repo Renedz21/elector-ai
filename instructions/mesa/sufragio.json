@@ -1,0 +1,52 @@
+{
+  "title": "Instrucciones para el proceso de sufragio",
+  "phase": "sufragio",
+  "steps": [
+    {
+      "number": 1,
+      "title": "Verificación de identidad",
+      "description": "Verificar la identidad de cada elector mediante su DNI y cédula de sufragio. Confirmar que los documentos sean originales y válidos."
+    },
+    {
+      "number": 2,
+      "title": "Verificación en padrón",
+      "description": "Confirmar que el elector esté inscrito en el padrón electoral de la mesa. Revisar que el nombre y DNI coincidan con los registros."
+    },
+    {
+      "number": 3,
+      "title": "Entrega de cédula",
+      "description": "Entregar la cédula de sufragio correspondiente al elector. Asegurar que se entregue la cédula correcta según el tipo de elección."
+    },
+    {
+      "number": 4,
+      "title": "Espacio privado",
+      "description": "Asegurar que el elector marque su voto en el espacio privado designado. Garantizar la privacidad y secreto del voto."
+    },
+    {
+      "number": 5,
+      "title": "Depósito del voto",
+      "description": "Supervisar que el elector deposite su voto en la urna electoral. Verificar que el voto se deposite correctamente."
+    },
+    {
+      "number": 6,
+      "title": "Mantenimiento del orden",
+      "description": "Mantener el orden y la privacidad durante todo el proceso de votación. Evitar aglomeraciones y asegurar el flujo adecuado de electores."
+    },
+    {
+      "number": 7,
+      "title": "Registro de asistencia",
+      "description": "Registrar la asistencia de electores en los documentos correspondientes. Mantener un registro preciso y actualizado."
+    },
+    {
+      "number": 8,
+      "title": "Resolución de dudas",
+      "description": "Resolver dudas de los electores dentro del marco de tus competencias. Proporcionar información clara y precisa."
+    },
+    {
+      "number": 9,
+      "title": "Reporte de irregularidades",
+      "description": "Reportar cualquier irregularidad o incidente a las autoridades competentes. Documentar cualquier situación fuera de lo normal."
+    }
+  ]
+}
+

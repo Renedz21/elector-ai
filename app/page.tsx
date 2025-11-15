@@ -1,65 +1,149 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { AISearchSection } from "@/components/shared/ai-search-section";
+import {
+  Calendar,
+  Users,
+  FileText,
+  UserCheck,
+  ClipboardList,
+} from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-12 sm:space-y-16 lg:space-y-20">
+      <section className="text-center space-y-4 sm:space-y-6 py-8 sm:py-12">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight px-4">
+          ElectorAI
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+          Información electoral inteligente para las elecciones generales de
+          Perú 2026. Pregunta lo que necesites saber.
+        </p>
+        <div className="max-w-3xl mx-auto pt-6 sm:pt-8 px-4">
+          <AISearchSection />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="space-y-6 sm:space-y-8">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center px-4">
+          Explora la plataforma
+        </h2>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <Link href="/candidatos">
+            <Card className="transition-shadow hover:shadow-lg h-full">
+              <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
+                <div className="flex justify-center">
+                  <div className="flex size-12 sm:size-14 md:size-16 items-center justify-center rounded-full bg-primary/10">
+                    <Users className="size-6 sm:size-7 md:size-8 text-primary" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg sm:text-xl font-semibold">
+                    Candidatos
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Conoce a los candidatos presidenciales y congresales con sus
+                    propuestas y trayectoria.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/calendario">
+            <Card className="transition-shadow hover:shadow-lg h-full">
+              <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
+                <div className="flex justify-center">
+                  <div className="flex size-12 sm:size-14 md:size-16 items-center justify-center rounded-full bg-primary/10">
+                    <Calendar className="size-6 sm:size-7 md:size-8 text-primary" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg sm:text-xl font-semibold">
+                    Calendario Electoral
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Fechas importantes del proceso electoral 2026, desde
+                    inscripciones hasta proclamación.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/planes">
+            <Card className="transition-shadow hover:shadow-lg h-full">
+              <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
+                <div className="flex justify-center">
+                  <div className="flex size-12 sm:size-14 md:size-16 items-center justify-center rounded-full bg-primary/10">
+                    <FileText className="size-6 sm:size-7 md:size-8 text-primary" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg sm:text-xl font-semibold">
+                    Planes de Gobierno
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Resúmenes de los planes de gobierno generados con IA para
+                    facilitar su comprensión.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
-      </main>
+      </section>
+
+      <section className="space-y-6 sm:space-y-8">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center px-4">
+          Información electoral
+        </h2>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+          <Link href="/electores">
+            <Card className="transition-shadow hover:shadow-lg h-full">
+              <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
+                <div className="flex justify-center">
+                  <div className="flex size-12 sm:size-14 md:size-16 items-center justify-center rounded-full bg-primary/10">
+                    <UserCheck className="size-6 sm:size-7 md:size-8 text-primary" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg sm:text-xl font-semibold">
+                    Información para electores
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Ubicación de locales de votación, instrucciones sobre la
+                    cédula de sufragio, recomendaciones de seguridad y marco
+                    legal.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/miembros-de-mesa">
+            <Card className="transition-shadow hover:shadow-lg h-full">
+              <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4">
+                <div className="flex justify-center">
+                  <div className="flex size-12 sm:size-14 md:size-16 items-center justify-center rounded-full bg-primary/10">
+                    <ClipboardList className="size-6 sm:size-7 md:size-8 text-primary" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg sm:text-xl font-semibold">
+                    Información para miembros de mesa
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Calendario de actividades, deberes y responsabilidades para
+                    miembros de mesa electoral.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

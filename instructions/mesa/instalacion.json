@@ -1,0 +1,47 @@
+{
+  "title": "Instrucciones para la instalación de la mesa",
+  "phase": "instalacion",
+  "steps": [
+    {
+      "number": 1,
+      "title": "Presentación puntual",
+      "description": "Presentarse puntualmente en el local de votación asignado en la hora establecida. La puntualidad es fundamental para el correcto desarrollo del proceso."
+    },
+    {
+      "number": 2,
+      "title": "Verificación de materiales",
+      "description": "Verificar que todos los materiales electorales estén completos y en buen estado. Revisar cédulas de sufragio, urnas, actas y demás documentos necesarios."
+    },
+    {
+      "number": 3,
+      "title": "Preparación del espacio",
+      "description": "Revisar que el espacio físico de la mesa esté adecuadamente preparado y señalizado. Asegurar que haya suficiente espacio para el proceso de votación."
+    },
+    {
+      "number": 4,
+      "title": "Confirmación de miembros",
+      "description": "Confirmar la presencia de todos los miembros de mesa designados. Verificar identidades y roles asignados."
+    },
+    {
+      "number": 5,
+      "title": "Verificación de urna",
+      "description": "Realizar la verificación de la urna electoral y sellarla correctamente. Asegurar que la urna esté vacía y en condiciones adecuadas."
+    },
+    {
+      "number": 6,
+      "title": "Organización de materiales",
+      "description": "Colocar las cédulas de sufragio y materiales necesarios en el lugar correspondiente. Organizar el espacio de trabajo de manera eficiente."
+    },
+    {
+      "number": 7,
+      "title": "Preparación del área de votación",
+      "description": "Preparar el espacio para la identificación de electores y el proceso de votación. Asegurar privacidad y orden."
+    },
+    {
+      "number": 8,
+      "title": "Coordinación con autoridades",
+      "description": "Coordinar con el personal de seguridad y autoridades del local de votación. Establecer canales de comunicación para cualquier eventualidad."
+    }
+  ]
+}
+

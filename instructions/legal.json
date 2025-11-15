@@ -1,0 +1,79 @@
+{
+  "title": "Marco legal del proceso electoral",
+  "categories": [
+    {
+      "title": "Constitución y Leyes Orgánicas",
+      "articles": [
+        {
+          "title": "Constitución Política del Perú",
+          "content": "El proceso electoral se rige por la Constitución Política del Perú, que establece los principios fundamentales del derecho al voto y la participación ciudadana en los procesos democráticos."
+        },
+        {
+          "title": "Ley Orgánica de Elecciones",
+          "content": "La Ley Orgánica de Elecciones regula todos los aspectos del proceso electoral, incluyendo la organización, desarrollo y supervisión de las elecciones generales."
+        }
+      ]
+    },
+    {
+      "title": "Autoridades Electorales",
+      "articles": [
+        {
+          "title": "Jurado Nacional de Elecciones (JNE)",
+          "content": "El JNE es el órgano máximo del sistema electoral peruano, encargado de administrar justicia electoral y garantizar el cumplimiento de las normas electorales."
+        },
+        {
+          "title": "Oficina Nacional de Procesos Electorales (ONPE)",
+          "content": "La ONPE es responsable de organizar y ejecutar los procesos electorales, incluyendo la logística, el padrón electoral y el conteo de votos."
+        },
+        {
+          "title": "Registro Nacional de Identificación y Estado Civil (RENIEC)",
+          "content": "RENIEC es responsable de mantener el registro de identidad de los ciudadanos y emitir los documentos de identidad necesarios para ejercer el voto."
+        }
+      ]
+    },
+    {
+      "title": "Derechos y Deberes",
+      "articles": [
+        {
+          "title": "Derecho al voto",
+          "content": "Todos los ciudadanos en capacidad de ejercerlo tienen el derecho y el deber de participar en las elecciones generales conforme a la legislación vigente."
+        },
+        {
+          "title": "Secreto del voto",
+          "content": "El secreto del voto está garantizado por ley. Nadie puede ser obligado a revelar su preferencia electoral."
+        },
+        {
+          "title": "Voto obligatorio",
+          "content": "El voto es obligatorio para todos los ciudadanos en capacidad de ejercerlo, conforme a la legislación vigente."
+        }
+      ]
+    },
+    {
+      "title": "Proceso Electoral",
+      "articles": [
+        {
+          "title": "Locales de votación",
+          "content": "El proceso de votación se realiza en locales designados oficialmente, bajo la supervisión de miembros de mesa designados por sorteo público."
+        },
+        {
+          "title": "Horarios",
+          "content": "Las elecciones se desarrollan en un solo día, durante las horas establecidas por la autoridad electoral."
+        },
+        {
+          "title": "Resultados",
+          "content": "Los resultados son procesados y verificados mediante procedimientos establecidos en la normativa electoral."
+        }
+      ]
+    },
+    {
+      "title": "Irregularidades",
+      "articles": [
+        {
+          "title": "Reporte de irregularidades",
+          "content": "Cualquier irregularidad o duda sobre el proceso debe ser reportada a las autoridades electorales competentes para su revisión y resolución conforme a la ley."
+        }
+      ]
+    }
+  ]
+}
+

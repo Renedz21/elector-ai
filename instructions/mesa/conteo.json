@@ -1,0 +1,52 @@
+{
+  "title": "Instrucciones para el conteo y cierre",
+  "phase": "conteo",
+  "steps": [
+    {
+      "number": 1,
+      "title": "Cierre de la votación",
+      "description": "Al cierre de la votación, verificar que no haya más electores en la fila. Cerrar oficialmente el proceso de votación según el horario establecido."
+    },
+    {
+      "number": 2,
+      "title": "Apertura de la urna",
+      "description": "Abrir la urna electoral en presencia de todos los miembros de mesa y representantes autorizados. Verificar el sello de seguridad."
+    },
+    {
+      "number": 3,
+      "title": "Conteo de votos",
+      "description": "Proceder al conteo de votos de manera ordenada y sistemática. Contar cada voto individualmente y verificar su validez."
+    },
+    {
+      "number": 4,
+      "title": "Clasificación de votos",
+      "description": "Clasificar los votos según corresponda. Separar votos válidos, nulos y en blanco según la normativa electoral."
+    },
+    {
+      "number": 5,
+      "title": "Llenado de actas",
+      "description": "Llenar las actas correspondientes con los resultados del conteo. Asegurar que toda la información sea precisa y completa."
+    },
+    {
+      "number": 6,
+      "title": "Verificación de actas",
+      "description": "Verificar que las actas estén correctamente llenadas y sin errores. Revisar todos los datos antes de proceder a la firma."
+    },
+    {
+      "number": 7,
+      "title": "Firma de actas",
+      "description": "Firmar las actas correspondientes todos los miembros de mesa. Asegurar que todas las firmas estén presentes."
+    },
+    {
+      "number": 8,
+      "title": "Entrega de resultados",
+      "description": "Entregar los resultados a las autoridades competentes. Asegurar que toda la documentación se entregue correctamente."
+    },
+    {
+      "number": 9,
+      "title": "Custodia de materiales",
+      "description": "Mantener la urna y los materiales bajo custodia hasta su entrega oficial. Asegurar la seguridad de todos los elementos electorales."
+    }
+  ]
+}
+

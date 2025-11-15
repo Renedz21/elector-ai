@@ -1,0 +1,31 @@
+{
+  "title": "Instrucciones sobre la cédula de sufragio",
+  "sections": [
+    {
+      "title": "Verificación previa",
+      "instructions": [
+        "Verifica que tu cédula de sufragio esté en buen estado y sea legible.",
+        "Revisa que tus datos personales (nombre, DNI, fecha de nacimiento) sean correctos.",
+        "Confirma que la cédula corresponda a tu distrito electoral y local de votación.",
+        "Si encuentras algún error, acude al Registro Nacional de Identificación y Estado Civil (RENIEC) con anticipación."
+      ]
+    },
+    {
+      "title": "Día de la votación",
+      "instructions": [
+        "Lleva únicamente tu cédula de sufragio original. No se aceptan copias ni fotografías.",
+        "Presenta tu cédula al momento de ingresar al local de votación y al momento de ejercer tu voto.",
+        "Conserva tu cédula después de votar, ya que puede ser necesaria para verificar tu participación."
+      ]
+    },
+    {
+      "title": "Importante",
+      "instructions": [
+        "La cédula de sufragio es un documento oficial y personal.",
+        "No compartas tu cédula con otras personas.",
+        "En caso de pérdida o extravío, contacta inmediatamente a RENIEC."
+      ]
+    }
+  ]
+}
+
