@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,8 +12,8 @@ import {
 } from "@/components/ui/select";
 import { Search, X } from "lucide-react";
 import { useUrlFilters } from "@/lib/hooks/use-url-filters";
-import { useDebounce } from "@/lib/hooks/use-debounce";
-import { Label } from "../ui/label";
+import { useSearchInput } from "@/lib/hooks/use-search-input";
+import { Label } from "@/components/ui/label";
 
 type CandidateFiltersProps = {
   partidos: string[];
@@ -68,16 +67,11 @@ export function CandidateFilters({
     debounceMs: 500,
   });
 
-  const [search, setSearch] = useState(getParam("search"));
-  const debouncedSearch = useDebounce(search, 500);
-
-  // Auto-update URL when debounced search changes
-  useEffect(() => {
-    if (debouncedSearch !== getParam("search")) {
-      setParam("search", debouncedSearch);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch]);
+  const [search, setSearch] = useSearchInput({
+    initialValue: getParam("search"),
+    onSearch: (value) => setParam("search", value),
+    debounceMs: 500,
+  });
 
   const partido = getParam("partido");
   const cargo = getParam("cargo");

@@ -1,54 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Navigation, ExternalLink, Loader2 } from "lucide-react";
-import { findNearestLocations } from "@/lib/services/voting-locations";
+import { useGeolocation } from "@/lib/hooks/use-geolocation";
+import { useLocationSearch } from "@/lib/hooks/use-location-search";
 import type { VotingLocationWithDistance } from "@/lib/types";
 
 export function VotingLocationFinder() {
-  const [locations, setLocations] = useState<VotingLocationWithDistance[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const { locations, loading: searchLoading, error: searchError, searchLocations } =
+    useLocationSearch({ limit: 3 });
 
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      setError("La geolocalización no está disponible en tu navegador.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const coords = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setUserLocation(coords);
-
-        try {
-          const nearest = await findNearestLocations(coords.lat, coords.lng, 3);
-          setLocations(nearest);
-        } catch (err) {
-          setError("Error al buscar locales de votación. Intenta nuevamente.");
-          console.error(err);
-        } finally {
-          setLoading(false);
-        }
+  const { coordinates, loading: geoLoading, error: geoError, getLocation } =
+    useGeolocation({
+      onSuccess: (coords) => {
+        searchLocations(coords);
       },
-      (err) => {
-        setError("No se pudo obtener tu ubicación. Verifica los permisos del navegador.");
-        setLoading(false);
-      },
-    );
-  };
+    });
+
+  const loading = geoLoading || searchLoading;
+  const error = geoError || searchError;
 
   const openGoogleMaps = (location: VotingLocationWithDistance) => {
     const url = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
@@ -91,11 +62,11 @@ export function VotingLocationFinder() {
           </div>
         )}
 
-        {userLocation && (
+        {coordinates && (
           <div className="rounded-md border bg-muted/50 p-3 text-xs sm:text-sm">
             <p className="font-medium mb-1">Tu ubicación:</p>
             <p className="font-mono">
-              {userLocation.lat.toFixed(6)}, {userLocation.lng.toFixed(6)}
+              {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
             </p>
           </div>
         )}

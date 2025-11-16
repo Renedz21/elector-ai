@@ -1,8 +1,5 @@
 import { openai } from "@ai-sdk/openai";
 import { convertToModelMessages, streamText, UIMessage } from "ai";
-import { getCandidates } from "@/lib/services/candidates";
-import { getAllCalendarEvents } from "@/lib/services/calendar-events";
-import { getAllPlans } from "@/lib/services/plans";
 
 export const maxDuration = 30;
 
@@ -11,14 +8,7 @@ const tools = {
     searchContextSize: "high",
   }),
 };
-
-export async function POST(req: Request) {
-  try {
-    const { messages }: { messages: UIMessage[] } = await req.json();
-
-    const modelMessages = convertToModelMessages(messages);
-
-    const systemPrompt = `
+const systemPrompt = `
 Eres un asistente especializado únicamente en las Elecciones Generales del Perú 2026.
 
 LÍMITES ESTRICTOS:
@@ -40,6 +30,8 @@ PROHIBIDO:
 - Emitir opiniones políticas, juicios de valor o favoritismos.
 - Inventar datos o suponer información no verificada.
 - Dar consejos de voto (esto es ilegal).
+- Responder con URLs o nombres de fuentes, tampoco incluyas enlaces en tu respuesta ni entre paréntesis ni corchetes.
+
 
 REDIRECCIÓN A VISTAS:
 Si detectas que la consulta corresponde a una vista específica, no expliques el contenido.  
@@ -50,18 +42,22 @@ Solo responde de forma breve indicando hacia dónde debe dirigirlo la app:
 - Si pregunta sobre "cédula", "cómo votar" → redirigir a instrucciones de elector.
 - Si pregunta sobre "miembro de mesa" → redirigir a la vista de miembros de mesa.
 - Si pregunta sobre "fechas" → redirigir a la vista de calendario.
-- Si pregunta sobre "candidato", "partido", "plan" → redirigir a sus vistas respectivas.
 
 ESTILO:
 - Responde siempre en español.
 - Sé breve, directo y claro.
-- No uses URLs ni nombres de fuentes.
 - No invites al usuario a dar más detalles.
 - No fomentes una conversación continua.
 - Responde y termina.
 - Busca información en internet si es necesario, solamente si la pregunta tiene relación con las elecciones 2026.
 
 `;
+
+export async function POST(req: Request) {
+  try {
+    const { messages }: { messages: UIMessage[] } = await req.json();
+
+    const modelMessages = convertToModelMessages(messages);
 
     const result = streamText({
       model: openai.responses("gpt-5.1"),

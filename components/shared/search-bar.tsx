@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, Loader2 } from "lucide-react";
+import { useSearchInput } from "@/lib/hooks/use-search-input";
 
 type SearchBarProps = {
   onSearch: (query: string) => void;
@@ -19,24 +19,19 @@ export function SearchBar({
   isLoading = false,
   initialValue = "",
 }: SearchBarProps) {
-  const [query, setQuery] = useState(initialValue);
+  const [query, setQuery, handleSubmit] = useSearchInput({
+    initialValue,
+  });
 
-  // Actualizar el valor cuando cambie initialValue
-  useEffect(() => {
-    if (initialValue) {
-      setQuery(initialValue);
-    }
-  }, [initialValue]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim() && !isLoading) {
-      onSearch(query);
+      onSearch(query.trim());
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleFormSubmit} className="w-full">
       <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 size-4 sm:size-5 -translate-y-1/2 text-muted-foreground" />

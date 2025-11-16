@@ -5,14 +5,33 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { SearchSuggestions } from "./search-suggestions";
 import { AudioInput } from "./audio-input";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { Sparkles, AlertCircle, Loader2, Search, ArrowUp } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Sparkles, AlertCircle, ArrowUp } from "lucide-react";
+import {
+  PromptInput,
+  PromptInputTextarea,
+  PromptInputSubmit,
+  PromptInputFooter,
+} from "../ai-elements/prompt-input";
+import { Conversation, ConversationContent } from "../ai-elements/conversation";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "../ai-elements/message";
+import { Loader } from "../ai-elements/loader";
+import {
+  Sources,
+  SourcesTrigger,
+  SourcesContent,
+  Source,
+} from "../ai-elements/sources";
+import { useChatMessages } from "@/lib/hooks/use-chat-messages";
+import { useChatSources } from "@/lib/hooks/use-chat-sources";
 
 export function AISearchSection() {
   const [query, setQuery] = useState("");
-  const [currentQuery, setCurrentQuery] = useState("");
 
   const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
@@ -23,183 +42,227 @@ export function AISearchSection() {
     },
   });
 
+  const {
+    userMessages,
+    assistantMessages,
+    lastAssistantMessage,
+    getUserMessageText,
+    getAssistantMessageText,
+  } = useChatMessages({ messages });
+
+  const { sources, isSearching, hasSearchError } =
+    useChatSources(lastAssistantMessage);
+
   const handleSearch = (searchQuery: string) => {
     if (!searchQuery.trim()) return;
-    setCurrentQuery(searchQuery);
     sendMessage({ text: searchQuery });
     setQuery("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleSearch(query);
+  const handleSubmit = (
+    { text }: { text: string; files: unknown[] },
+    _event: React.FormEvent<HTMLFormElement>
+  ) => {
+    handleSearch(text);
   };
 
   const handleSuggestionSelect = (suggestion: string) => {
     handleSearch(suggestion);
   };
 
-  // Extract the last assistant response
-  const lastAssistantMessage = [...messages]
-    .reverse()
-    .find((m) => m.role === "assistant");
+  const hasError = error || hasSearchError;
 
-  const assistantText = lastAssistantMessage?.parts
-    .filter((p) => p.type === "text")
-    .map((p) => p.text)
-    .join("\n");
-
-  const isSearching = lastAssistantMessage?.parts.some(
-    (p) =>
-      p.type === "tool-web_search" &&
-      (p.state === "input-streaming" || p.state === "input-available")
-  );
-
-  const hasError =
-    error ||
-    lastAssistantMessage?.parts.some(
-      (p) => p.type === "tool-web_search" && p.state === "output-error"
-    );
-
+  const isLoading = status === "streaming" || status === "submitted";
   const showResults = messages.length > 0;
 
   return (
     <div className="space-y-6">
-      {/* Search Input */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold text-lg">Consulta Electoral</h3>
-        </div>
-        <div className="flex gap-2 items-end relative">
-          <Textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Pregunta sobre las elecciones 2026..."
-            disabled={status === "streaming"}
-            className="min-h-[120px] max-h-[200px] resize-none text-base p-4"
-            rows={5}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
-          />
-          <div className="absolute right-3 bottom-3 flex items-center justify-center gap-x-2">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <Sparkles className="w-5 h-5 text-primary" />
+        <h3 className="font-semibold text-lg">Consulta Electoral</h3>
+      </div>
+
+      {/* Prompt Input with AI Elements */}
+      <PromptInput onSubmit={handleSubmit}>
+        <PromptInputTextarea
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Pregunta sobre las elecciones 2026..."
+          disabled={isLoading}
+        />
+        <PromptInputFooter>
+          <div className="flex items-center gap-2">
             <AudioInput
               onText={(text) => handleSearch(text)}
-              disabled={status === "streaming"}
+              disabled={isLoading}
             />
-            <Button
-              type="submit"
-              disabled={status === "streaming" || !query.trim()}
-              size="icon"
-              className="rounded-full transition-transform duration-75 ease-out"
+            <PromptInputSubmit
+              disabled={isLoading || !query.trim()}
+              status={status}
             >
-              {status === "streaming" ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <ArrowUp className="size-5" />
-              )}
-            </Button>
+              <ArrowUp className="size-5" />
+            </PromptInputSubmit>
           </div>
-        </div>
-      </form>
+        </PromptInputFooter>
+      </PromptInput>
 
       {/* Suggestions */}
-      {!showResults && <SearchSuggestions onSelect={handleSuggestionSelect} />}
+      {!showResults && (
+        <SearchSuggestions
+          onSelect={handleSuggestionSelect}
+          isLoading={isLoading}
+        />
+      )}
 
-      {/* Results Panel - Static Height */}
+      {/* Conversation Results */}
       {showResults && (
-        <Card className="border-2 shadow-sm">
-          <CardHeader className="border-b bg-muted/30 py-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-base sm:text-lg mb-1">
-                  Resultados de tu consulta
-                </h3>
-                <p className="text-sm text-muted-foreground truncate">
-                  {currentQuery}
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setQuery(currentQuery)}
-                className="shrink-0"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                Nueva búsqueda
-              </Button>
+        <Card className="border shadow-sm overflow-hidden py-0">
+          <CardHeader className="border-b bg-muted/20 py-3 px-4 sm:py-4 sm:px-6 gap-0">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-sm sm:text-base">
+                Conversación
+              </h3>
+              {userMessages.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const lastUserMessage =
+                      userMessages[userMessages.length - 1];
+                    const text = getUserMessageText(lastUserMessage);
+                    setQuery(text);
+                  }}
+                  className="h-8 text-xs sm:text-sm"
+                >
+                  Editar última pregunta
+                </Button>
+              )}
             </div>
           </CardHeader>
 
           <CardContent className="p-0">
-            <div className="h-[500px] overflow-y-auto">
-              {/* Loading State */}
-              {status === "streaming" && !assistantText && (
-                <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                  <div className="relative mb-6">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Sparkles className="w-8 h-8 text-primary animate-pulse" />
-                    </div>
-                    <div className="absolute inset-0 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-                  </div>
-                  <h4 className="text-lg font-medium mb-2">
-                    Procesando tu consulta
-                  </h4>
-                  <p className="text-sm text-muted-foreground max-w-md">
-                    {isSearching
-                      ? "Buscando información actualizada en internet..."
-                      : "Analizando datos electorales y generando respuesta..."}
-                  </p>
-                </div>
-              )}
+            <div className="h-[400px] sm:h-[500px] flex flex-col overflow-hidden">
+              <Conversation className="flex-1 min-h-0">
+                <ConversationContent>
+                  {/* Display conversation history */}
+                  {messages.map((message, index) => {
+                    if (message.role === "user") {
+                      const userText = getUserMessageText(message);
 
-              {/* Error State */}
-              {hasError && (
-                <div className="flex flex-col items-center justify-center h-full p-8 text-center">
-                  <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-6">
-                    <AlertCircle className="w-8 h-8 text-destructive" />
-                  </div>
-                  <h4 className="text-lg font-medium mb-2">
-                    Error al procesar consulta
-                  </h4>
-                  <p className="text-sm text-muted-foreground max-w-md mb-4">
-                    {error?.message ||
-                      "No se pudo completar la búsqueda. Por favor, intenta nuevamente."}
-                  </p>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleSearch(currentQuery)}
-                  >
-                    Reintentar
-                  </Button>
-                </div>
-              )}
+                      return (
+                        <Message key={index} from="user">
+                          <MessageContent className="text-white! dark:text-dark! dark:font-medium!">
+                            <MessageResponse>{userText}</MessageResponse>
+                          </MessageContent>
+                        </Message>
+                      );
+                    }
 
-              {/* Response Content */}
-              {assistantText && !hasError && (
-                <div className="p-6 sm:p-8">
-                  <div className="prose prose-neutral max-w-none dark:prose-invert">
-                    <div
-                      className="whitespace-pre-wrap leading-relaxed text-sm sm:text-base text-left"
-                      dangerouslySetInnerHTML={{ __html: assistantText }}
-                    />
-                  </div>
+                    if (message.role === "assistant") {
+                      const messageText = getAssistantMessageText(message);
 
-                  {/* Streaming indicator */}
-                  {status === "streaming" && (
-                    <div className="flex items-center gap-2 mt-4 pt-4 border-t">
-                      <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                      <span className="text-sm text-muted-foreground">
-                        Generando respuesta...
-                      </span>
-                    </div>
+                      const isStreaming =
+                        index === messages.length - 1 && status === "streaming";
+                      const isLastMessage = index === messages.length - 1;
+
+                      return (
+                        <Message key={index} from="assistant">
+                          <MessageContent className="text-left border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-lg p-4 font-medium! dark:font-medium!">
+                            {messageText ? (
+                              <>
+                                <MessageResponse>{messageText}</MessageResponse>
+                                {isLastMessage && sources.length > 0 && (
+                                  <Sources>
+                                    <SourcesTrigger count={sources.length} />
+                                    <SourcesContent>
+                                      {sources.map((source, idx) => (
+                                        <Source
+                                          key={idx}
+                                          href={source.url || "#"}
+                                          title={
+                                            source.title ||
+                                            source.url ||
+                                            `Fuente ${idx + 1}`
+                                          }
+                                        />
+                                      ))}
+                                    </SourcesContent>
+                                  </Sources>
+                                )}
+                              </>
+                            ) : isStreaming ? (
+                              <div className="flex items-center gap-2 py-2">
+                                <Loader size={16} />
+                                <span className="text-sm text-muted-foreground">
+                                  {isSearching
+                                    ? "Buscando información actualizada..."
+                                    : "Generando respuesta..."}
+                                </span>
+                              </div>
+                            ) : null}
+                          </MessageContent>
+                        </Message>
+                      );
+                    }
+
+                    return null;
+                  })}
+
+                  {/* Loading state for new messages */}
+                  {isLoading && !lastAssistantMessage && (
+                    <Message from="assistant">
+                      <MessageContent>
+                        <div className="flex items-center gap-2 py-2">
+                          <Loader size={16} />
+                          <span className="text-sm text-muted-foreground">
+                            {isSearching
+                              ? "Buscando información actualizada en internet..."
+                              : "Analizando datos electorales..."}
+                          </span>
+                        </div>
+                      </MessageContent>
+                    </Message>
                   )}
-                </div>
-              )}
+
+                  {/* Error state */}
+                  {hasError && (
+                    <Message from="system">
+                      <MessageContent>
+                        <div className="flex flex-col items-center gap-3 text-center py-4">
+                          <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+                            <AlertCircle className="w-6 h-6 text-destructive" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium mb-1">
+                              Error al procesar consulta
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {error?.message ||
+                                "No se pudo completar la búsqueda. Por favor, intenta nuevamente."}
+                            </p>
+                          </div>
+                          {userMessages.length > 0 && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const lastUserMessage =
+                                  userMessages[userMessages.length - 1];
+                                const text =
+                                  getUserMessageText(lastUserMessage);
+                                handleSearch(text);
+                              }}
+                            >
+                              Reintentar
+                            </Button>
+                          )}
+                        </div>
+                      </MessageContent>
+                    </Message>
+                  )}
+                </ConversationContent>
+              </Conversation>
             </div>
           </CardContent>
         </Card>

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 
 const checklistItems = [
   "Llevar DNI original",
@@ -19,19 +19,22 @@ const checklistItems = [
 const STORAGE_KEY = "elector_safety_checklist";
 
 export function SafetyChecklist() {
-  const [checkedItems, setCheckedItems] = useState<Set<number>>(new Set());
-
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setCheckedItems(new Set(parsed));
-      } catch {
-        // Ignore parse errors
-      }
+  const [checkedItemsArray, setCheckedItemsArray] = useLocalStorage<number[]>(
+    STORAGE_KEY,
+    [],
+    {
+      serializer: (value) => JSON.stringify(value),
+      deserializer: (value) => {
+        try {
+          return JSON.parse(value);
+        } catch {
+          return [];
+        }
+      },
     }
-  }, []);
+  );
+
+  const checkedItems = new Set(checkedItemsArray);
 
   const toggleItem = (index: number) => {
     const newChecked = new Set(checkedItems);
@@ -40,8 +43,7 @@ export function SafetyChecklist() {
     } else {
       newChecked.add(index);
     }
-    setCheckedItems(newChecked);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(newChecked)));
+    setCheckedItemsArray(Array.from(newChecked));
   };
 
   const allChecked = checkedItems.size === checklistItems.length;

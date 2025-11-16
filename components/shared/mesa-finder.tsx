@@ -5,38 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MapPin, Search, Loader2, ExternalLink } from "lucide-react";
-import { findMesaByNumber } from "@/lib/services/mesa-locations";
+import { useMesaSearch } from "@/lib/hooks/use-mesa-search";
 import type { MesaLocation } from "@/lib/types";
 
 export function MesaFinder() {
   const [mesaNumber, setMesaNumber] = useState("");
-  const [mesaLocation, setMesaLocation] = useState<MesaLocation | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { mesaLocation, loading, error, searchMesa } = useMesaSearch();
 
-  const handleSearch = async () => {
-    if (!mesaNumber.trim()) {
-      setError("Por favor ingresa un número de mesa");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setMesaLocation(null);
-
-    try {
-      const result = await findMesaByNumber(mesaNumber.trim());
-      if (result) {
-        setMesaLocation(result);
-      } else {
-        setError("No se encontró una mesa con ese número");
-      }
-    } catch (err) {
-      setError("Error al buscar la mesa. Intenta nuevamente.");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = () => {
+    searchMesa(mesaNumber);
   };
 
   const openGoogleMaps = (location: MesaLocation) => {
