@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import type { MesaSchedule } from "@/lib/types";
 import type { Database } from "@/utils/supabase/database.types";
+import { dummyMesaSchedule } from "@/lib/dummy-data";
 
 type MesaScheduleRow = Database["public"]["Tables"]["mesa_schedule"]["Row"];
 
@@ -26,10 +27,14 @@ export async function getMesaSchedule(): Promise<MesaSchedule[]> {
 
   if (error) {
     console.error("Error fetching mesa schedule:", error);
-    return [];
   }
 
-  return (data ?? []).map(mapRowToMesaSchedule);
+  // Use dummy data if no data from Supabase
+  if (!data || data.length === 0) {
+    return dummyMesaSchedule.map(mapRowToMesaSchedule);
+  }
+
+  return data.map(mapRowToMesaSchedule);
 }
 
 export async function getMesaScheduleByPhase(
@@ -45,9 +50,15 @@ export async function getMesaScheduleByPhase(
 
   if (error) {
     console.error("Error fetching mesa schedule by phase:", error);
-    return [];
   }
 
-  return (data ?? []).map(mapRowToMesaSchedule);
+  // Use dummy data if no data from Supabase
+  if (!data || data.length === 0) {
+    return dummyMesaSchedule
+      .filter((s) => s.phase === phase)
+      .map(mapRowToMesaSchedule);
+  }
+
+  return data.map(mapRowToMesaSchedule);
 }
 

@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import type { Tables } from "@/utils/supabase/database.types";
+import { dummyCandidates } from "@/lib/dummy-data";
 
 export type CandidateRow = Tables<"candidates">;
 
@@ -35,12 +36,14 @@ export async function getPartidos(): Promise<string[]> {
 
   if (error) {
     console.error("Error fetching partidos:", error);
-    return [];
   }
+
+  // Use dummy data if no data from Supabase
+  const sourceData = data && data.length > 0 ? data : dummyCandidates;
 
   // Extract unique values
   const uniquePartidos = Array.from(
-    new Set(data?.map((row) => row.partido) || [])
+    new Set(sourceData.map((row) => row.partido))
   ).sort();
 
   return uniquePartidos;
@@ -58,13 +61,13 @@ export async function getCargos(): Promise<string[]> {
 
   if (error) {
     console.error("Error fetching cargos:", error);
-    return [];
   }
 
-  console.log(data);
-  // Extract unique values
+  // Use dummy data if no data from Supabase
+  const sourceData = data && data.length > 0 ? data : dummyCandidates;
+
   const uniqueCargos = Array.from(
-    new Set(data?.map((row) => row.cargo) || [])
+    new Set(sourceData.map((row) => row.cargo))
   ).sort();
 
   return uniqueCargos;
@@ -82,15 +85,17 @@ export async function getRegiones(): Promise<string[]> {
 
   if (error) {
     console.error("Error fetching regiones:", error);
-    return [];
   }
+
+  // Use dummy data if no data from Supabase
+  const sourceData = data && data.length > 0 ? data : dummyCandidates;
 
   // Extract unique values, filtering out null/empty/unknown
   const uniqueRegiones = Array.from(
     new Set(
-      data
-        ?.map((row) => row.region)
-        .filter((region) => region && region !== "unknown") || []
+      sourceData
+        .map((row) => row.region)
+        .filter((region) => region && region !== "unknown")
     )
   ).sort();
 
@@ -138,20 +143,52 @@ export async function getCandidates(
 
   if (error) {
     console.error("Error fetching candidates:", error);
-    return {
-      data: [],
-      total: 0,
-      page,
-      limit,
-      totalPages: 0,
-    };
   }
 
-  const total = count || 0;
+  // Use dummy data if no data from Supabase
+  const useDummyData = !data || data.length === 0;
+  let candidates = data || [];
+  let total = count || 0;
+
+  if (useDummyData) {
+    candidates = dummyCandidates;
+    total = dummyCandidates.length;
+  }
+
+  // Apply filters to dummy data if using it
+  if (useDummyData) {
+    let filtered = [...dummyCandidates];
+
+    if (filters.partido) {
+      filtered = filtered.filter((c) => c.partido === filters.partido);
+    }
+    if (filters.cargo) {
+      filtered = filtered.filter((c) => c.cargo === filters.cargo);
+    }
+    if (filters.region) {
+      filtered = filtered.filter((c) => c.region === filters.region);
+    }
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (c) =>
+          c.nombre.toLowerCase().includes(searchLower) ||
+          c.partido.toLowerCase().includes(searchLower) ||
+          c.region.toLowerCase().includes(searchLower) ||
+          c.cargo.toLowerCase().includes(searchLower)
+      );
+    }
+
+    total = filtered.length;
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    candidates = filtered.slice(start, end);
+  }
+
   const totalPages = Math.ceil(total / limit);
 
   return {
-    data: data || [],
+    data: candidates,
     total,
     page,
     limit,
@@ -170,8 +207,13 @@ export async function getCandidateById(
     .single();
 
   if (error) {
-    console.error("Error fetching candidate:", error);
+    console.log("Error fetching candidate:", error);
     return null;
+  }
+
+  // Use dummy data if no data from Supabase
+  if (!data) {
+    return dummyCandidates.find((c) => c.id === id) || null;
   }
 
   return data;

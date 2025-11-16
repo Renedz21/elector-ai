@@ -75,7 +75,10 @@ export function MesaAssistant() {
                         : "bg-muted"
                     )}
                   >
-                    <p className="whitespace-pre-wrap">{text}</p>
+                    <p
+                      className="whitespace-pre-wrap text-left"
+                      dangerouslySetInnerHTML={{ __html: text }}
+                    />
                   </div>
                 </div>
               );
@@ -114,4 +117,3 @@ export function MesaAssistant() {
     </Card>
   );
 }
-

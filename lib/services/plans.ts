@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import type { Tables } from "@/utils/supabase/database.types";
+import { dummyPlans } from "@/lib/dummy-data";
 
 type PlanRow = Tables<"plans">;
 
@@ -39,10 +40,14 @@ export async function getAllPlans(): Promise<Plan[]> {
 
   if (error) {
     console.error("Error fetching plans:", error);
-    return [];
   }
 
-  return (data || []).map(mapPlanFromRow);
+  // Use dummy data if no data from Supabase
+  if (!data || data.length === 0) {
+    return dummyPlans.map(mapPlanFromRow);
+  }
+
+  return data.map(mapPlanFromRow);
 }
 
 export async function getPlanById(id: string): Promise<Plan | null> {
@@ -55,11 +60,12 @@ export async function getPlanById(id: string): Promise<Plan | null> {
 
   if (error) {
     console.error("Error fetching plan:", error);
-    return null;
   }
 
+  // Use dummy data if no data from Supabase
   if (!data) {
-    return null;
+    const dummyPlan = dummyPlans.find((p) => p.id === id);
+    return dummyPlan ? mapPlanFromRow(dummyPlan) : null;
   }
 
   return mapPlanFromRow(data);

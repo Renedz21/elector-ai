@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/client";
 import type { VotingLocation, VotingLocationWithDistance } from "@/lib/types";
+import { dummyVotingLocations } from "@/lib/dummy-data";
 
 export async function getAllVotingLocations(): Promise<VotingLocation[]> {
   const supabase = createClient();
@@ -7,11 +8,11 @@ export async function getAllVotingLocations(): Promise<VotingLocation[]> {
 
   if (error) {
     console.error("Error fetching voting locations:", error);
-    return [];
   }
 
-  return (
-    data?.map((loc) => ({
+  // Use dummy data if no data from Supabase
+  if (!data || data.length === 0) {
+    return dummyVotingLocations.map((loc) => ({
       id: loc.id,
       name: loc.name,
       address: loc.address,
@@ -20,8 +21,19 @@ export async function getAllVotingLocations(): Promise<VotingLocation[]> {
       district: loc.district,
       created_at: loc.created_at ?? undefined,
       updated_at: loc.updated_at ?? undefined,
-    })) ?? []
-  );
+    }));
+  }
+
+  return data.map((loc) => ({
+    id: loc.id,
+    name: loc.name,
+    address: loc.address,
+    latitude: loc.latitude,
+    longitude: loc.longitude,
+    district: loc.district,
+    created_at: loc.created_at ?? undefined,
+    updated_at: loc.updated_at ?? undefined,
+  }));
 }
 
 export function calculateDistance(

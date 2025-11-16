@@ -11,20 +11,20 @@ function loadMesaInstructions() {
     const instalacion = JSON.parse(
       readFileSync(
         join(process.cwd(), "instructions", "mesa", "instalacion.json"),
-        "utf-8",
-      ),
+        "utf-8"
+      )
     );
     const sufragio = JSON.parse(
       readFileSync(
         join(process.cwd(), "instructions", "mesa", "sufragio.json"),
-        "utf-8",
-      ),
+        "utf-8"
+      )
     );
     const conteo = JSON.parse(
       readFileSync(
         join(process.cwd(), "instructions", "mesa", "conteo.json"),
-        "utf-8",
-      ),
+        "utf-8"
+      )
     );
 
     return {
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         {
           status: 500,
           headers: { "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
@@ -97,7 +97,7 @@ Contexto disponible sobre procedimientos de miembros de mesa:
 ${context}`;
 
     const result = streamText({
-      model: openai("gpt-4o-mini"),
+      model: openai("gpt-5-nano"),
       system: systemPrompt,
       messages: convertToModelMessages(messages),
       temperature: 0.3,
@@ -114,8 +114,7 @@ ${context}`;
       {
         status: 500,
         headers: { "Content-Type": "application/json" },
-      },
+      }
     );
   }
 }
-

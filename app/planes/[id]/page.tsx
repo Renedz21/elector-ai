@@ -37,7 +37,7 @@ export default async function PlanDetailPage({ params }: Props) {
           </Link>
         </Button>
         <div className="flex items-start gap-3">
-          <div className="flex size-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
             <FileText className="size-6 text-primary" />
           </div>
           <div className="flex-1 space-y-2 min-w-0">
@@ -102,4 +102,3 @@ export default async function PlanDetailPage({ params }: Props) {
     </div>
   );
 }
-

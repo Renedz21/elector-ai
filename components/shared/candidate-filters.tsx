@@ -1,12 +1,20 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Search, X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useUrlFilters } from "@/lib/hooks/use-url-filters";
 import { useDebounce } from "@/lib/hooks/use-debounce";
+import { Label } from "../ui/label";
 
 type CandidateFiltersProps = {
   partidos: string[];
@@ -14,76 +22,77 @@ type CandidateFiltersProps = {
   regiones: string[];
 };
 
+type FilterSelectProps = {
+  id: string;
+  label: string;
+  value: string;
+  options: string[];
+  placeholder: string;
+  onChange: (value: string) => void;
+};
+
+function FilterSelect({
+  id,
+  label,
+  value,
+  options,
+  placeholder,
+  onChange,
+}: FilterSelectProps) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={id}>{label}</Label>
+      <Select value={value || undefined} onValueChange={onChange}>
+        <SelectTrigger id={id} className="w-full">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
 export function CandidateFilters({
   partidos,
   cargos,
   regiones,
 }: CandidateFiltersProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const { getParam, setParam, clearAllParams, isPending } = useUrlFilters({
+    basePath: "/candidatos",
+    debounceMs: 500,
+  });
 
-  const [search, setSearch] = useState(searchParams.get("search") || "");
-  const [partido, setPartido] = useState(searchParams.get("partido") || "");
-  const [cargo, setCargo] = useState(searchParams.get("cargo") || "");
-  const [region, setRegion] = useState(searchParams.get("region") || "");
-
-  // Debounce search input with 500ms delay
+  const [search, setSearch] = useState(getParam("search"));
   const debouncedSearch = useDebounce(search, 500);
 
-  // Sync state with URL params (only when URL changes, not from local state changes)
+  // Auto-update URL when debounced search changes
   useEffect(() => {
-    const urlSearch = searchParams.get("search") || "";
-    const urlPartido = searchParams.get("partido") || "";
-    const urlCargo = searchParams.get("cargo") || "";
-    const urlRegion = searchParams.get("region") || "";
-
-    setSearch(urlSearch);
-    setPartido(urlPartido);
-    setCargo(urlCargo);
-    setRegion(urlRegion);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  // Apply debounced search automatically (only when user types, not on URL changes)
-  useEffect(() => {
-    const currentSearchParam = searchParams.get("search") || "";
-    const trimmedDebounced = debouncedSearch.trim();
-    const trimmedCurrent = currentSearchParam.trim();
-
-    // Only update if the debounced value is different from URL param
-    // This prevents loops when URL changes update the state
-    if (trimmedDebounced !== trimmedCurrent) {
-      startTransition(() => {
-        const params = new URLSearchParams(searchParams.toString());
-        if (trimmedDebounced) {
-          params.set("search", trimmedDebounced);
-        } else {
-          params.delete("search");
-        }
-        params.delete("page");
-        router.push(`/candidatos?${params.toString()}`);
-      });
+    if (debouncedSearch !== getParam("search")) {
+      setParam("search", debouncedSearch);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch]);
 
-
-  const clearFilters = () => {
-    setSearch("");
-    setPartido("");
-    setCargo("");
-    setRegion("");
-    startTransition(() => {
-      router.push("/candidatos");
-    });
-  };
+  const partido = getParam("partido");
+  const cargo = getParam("cargo");
+  const region = getParam("region");
 
   const hasActiveFilters = search || partido || cargo || region;
 
+  const handleClearFilters = () => {
+    setSearch("");
+    clearAllParams();
+  };
+
   return (
     <Card>
-      <CardContent>
+      <CardContent className="p-6">
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
@@ -99,113 +108,38 @@ export function CandidateFilters({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <label
-                htmlFor="partido-filter"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                Partido
-              </label>
-              <select
-                id="partido-filter"
-                value={partido}
-                onChange={(e) => {
-                  setPartido(e.target.value);
-                  startTransition(() => {
-                    const params = new URLSearchParams(searchParams.toString());
-                    if (e.target.value) {
-                      params.set("partido", e.target.value);
-                    } else {
-                      params.delete("partido");
-                    }
-                    params.delete("page");
-                    router.push(`/candidatos?${params.toString()}`);
-                  });
-                }}
-                className="w-full h-10 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:opacity-50"
-              >
-                <option value="">Todos los partidos</option>
-                {partidos.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FilterSelect
+              id="partido-filter"
+              label="Partido"
+              value={partido}
+              options={partidos}
+              placeholder="Todos los partidos"
+              onChange={(value) => setParam("partido", value)}
+            />
 
-            <div className="space-y-2">
-              <label
-                htmlFor="cargo-filter"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                Cargo
-              </label>
-              <select
-                id="cargo-filter"
-                value={cargo}
-                onChange={(e) => {
-                  setCargo(e.target.value);
-                  startTransition(() => {
-                    const params = new URLSearchParams(searchParams.toString());
-                    if (e.target.value) {
-                      params.set("cargo", e.target.value);
-                    } else {
-                      params.delete("cargo");
-                    }
-                    params.delete("page");
-                    router.push(`/candidatos?${params.toString()}`);
-                  });
-                }}
-                className="w-full h-10 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:opacity-50"
-              >
-                <option value="">Todos los cargos</option>
-                {cargos.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FilterSelect
+              id="cargo-filter"
+              label="Cargo"
+              value={cargo}
+              options={cargos}
+              placeholder="Todos los cargos"
+              onChange={(value) => setParam("cargo", value)}
+            />
 
-            <div className="space-y-2">
-              <label
-                htmlFor="region-filter"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                Región
-              </label>
-              <select
-                id="region-filter"
-                value={region}
-                onChange={(e) => {
-                  setRegion(e.target.value);
-                  startTransition(() => {
-                    const params = new URLSearchParams(searchParams.toString());
-                    if (e.target.value) {
-                      params.set("region", e.target.value);
-                    } else {
-                      params.delete("region");
-                    }
-                    params.delete("page");
-                    router.push(`/candidatos?${params.toString()}`);
-                  });
-                }}
-                className="w-full h-10 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:opacity-50"
-              >
-                <option value="">Todas las regiones</option>
-                {regiones.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FilterSelect
+              id="region-filter"
+              label="Región"
+              value={region}
+              options={regiones}
+              placeholder="Todas las regiones"
+              onChange={(value) => setParam("region", value)}
+            />
           </div>
 
           {hasActiveFilters && (
             <div className="flex items-center gap-2">
               <Button
-                onClick={clearFilters}
+                onClick={handleClearFilters}
                 variant="ghost"
                 size="sm"
                 disabled={isPending}
@@ -220,4 +154,3 @@ export function CandidateFilters({
     </Card>
   );
 }
-

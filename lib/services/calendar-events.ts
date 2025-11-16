@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import type { CalendarEvent } from "@/lib/types";
 import type { Database } from "@/utils/supabase/database.types";
+import { dummyCalendarEvents } from "@/lib/dummy-data";
 
 type CalendarEventRow = Database["public"]["Tables"]["calendar_events"]["Row"];
 
@@ -24,10 +25,14 @@ export async function getAllCalendarEvents(): Promise<CalendarEvent[]> {
 
   if (error) {
     console.error("Error fetching calendar events:", error);
-    return [];
   }
 
-  return (data ?? []).map(mapRowToCalendarEvent);
+  // Use dummy data if no data from Supabase
+  if (!data || data.length === 0) {
+    return dummyCalendarEvents.map(mapRowToCalendarEvent);
+  }
+
+  return data.map(mapRowToCalendarEvent);
 }
 
 export async function getCalendarEventsByType(
@@ -43,9 +48,15 @@ export async function getCalendarEventsByType(
 
   if (error) {
     console.error("Error fetching calendar events by type:", error);
-    return [];
   }
 
-  return (data ?? []).map(mapRowToCalendarEvent);
+  // Use dummy data if no data from Supabase
+  if (!data || data.length === 0) {
+    return dummyCalendarEvents
+      .filter((e) => e.tipo === tipo)
+      .map(mapRowToCalendarEvent);
+  }
+
+  return data.map(mapRowToCalendarEvent);
 }
 

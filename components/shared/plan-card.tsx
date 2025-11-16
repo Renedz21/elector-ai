@@ -22,7 +22,7 @@ export function PlanCard({ plan }: PlanCardProps) {
     <Card>
       <CardHeader>
         <div className="flex items-start gap-3">
-          <div className="flex size-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
             <FileText className="size-5 text-primary" />
           </div>
           <div className="flex-1 space-y-1 min-w-0">

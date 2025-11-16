@@ -22,7 +22,7 @@ export function CalendarEventsList({
 
   if (layout === "grid") {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
         {events.map((event) => (
           <CalendarEventCard key={event.id} event={event} />
         ))}
@@ -38,4 +38,3 @@ export function CalendarEventsList({
     </div>
   );
 }
-

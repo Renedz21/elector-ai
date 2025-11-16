@@ -17,6 +17,23 @@ type CalendarEventCardProps = {
   event: CalendarEvent;
 };
 
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("es-PE", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const formatDateFull = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("es-PE", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
 const tipoLabels: Record<CalendarEvent["tipo"], string> = {
   inscripcion: "Inscripción",
   debate: "Debate",
@@ -38,53 +55,40 @@ const tipoColors: Record<
 
 export function CalendarEventCard({ event }: CalendarEventCardProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-PE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  const formatDateFull = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-PE", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   return (
     <>
       <Card
-        className={`cursor-pointer hover:shadow-md ${
+        className={`cursor-pointer hover:shadow-md h-full flex flex-col ${
           event.importante ? "border-primary" : ""
         }`}
         onClick={() => setIsOpen(true)}
       >
-        <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-shrink-0">
-              <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10">
-                <Calendar className="size-6 text-primary" />
-              </div>
-            </div>
-            <div className="flex-1 space-y-2 min-w-0">
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                <div className="space-y-1 flex-1 min-w-0">
+        <CardContent className="pt-4 sm:pt-6">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="shrink-0">
+                  <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10">
+                    <Calendar className="size-6 text-primary" />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
                   <p className="text-sm font-medium text-muted-foreground">
                     {formatDate(event.fecha)}
                   </p>
-                  <p className="text-base font-semibold leading-tight">
-                    {event.descripcion}
-                  </p>
+                  <Badge
+                    variant={tipoColors[event.tipo]}
+                    className="text-xs w-fit"
+                  >
+                    {tipoLabels[event.tipo]}
+                  </Badge>
                 </div>
-                <Badge variant={tipoColors[event.tipo]} className="text-xs w-fit">
-                  {tipoLabels[event.tipo]}
-                </Badge>
               </div>
+            </div>
+            <div className="space-y-3">
+              <p className="text-base font-semibold leading-snug">
+                {event.descripcion}
+              </p>
               {event.importante && (
                 <div className="flex items-center gap-2 text-sm text-primary">
                   <AlertCircle className="size-4 shrink-0" />

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { calculateDistance } from "@/lib/services/voting-locations";
 import type { VotingLocationWithDistance } from "@/lib/types";
+import { dummyVotingLocations } from "@/lib/dummy-data";
 
 export const maxDuration = 30;
 
@@ -25,17 +26,14 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Error fetching voting locations:", error);
-      return NextResponse.json(
-        { error: "Error al obtener locales de votación" },
-        { status: 500 }
-      );
     }
 
-    if (!locations || locations.length === 0) {
-      return NextResponse.json([]);
-    }
+    // Use dummy data if no data from Supabase
+    const sourceLocations = locations && locations.length > 0 
+      ? locations 
+      : dummyVotingLocations;
 
-    const locationsWithDistance: VotingLocationWithDistance[] = locations
+    const locationsWithDistance: VotingLocationWithDistance[] = sourceLocations
       .map((location) => ({
         id: location.id,
         name: location.name,
