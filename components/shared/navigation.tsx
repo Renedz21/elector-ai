@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Vote, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
@@ -68,6 +69,7 @@ export function Navigation() {
                 </Link>
               );
             })}
+            <ThemeToggle />
           </div>
 
           {/* Menú Tablet (más compacto) */}
@@ -89,6 +91,7 @@ export function Navigation() {
                 </Link>
               );
             })}
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="sm"
@@ -99,20 +102,22 @@ export function Navigation() {
             </Button>
           </div>
 
-          {/* Botón Menú Móvil */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
-          >
-            {isMobileMenuOpen ? (
-              <X className="size-5" />
-            ) : (
-              <Menu className="size-5" />
-            )}
-          </Button>
+          {/* Controles móvil */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            >
+              {isMobileMenuOpen ? (
+                <X className="size-5" />
+              ) : (
+                <Menu className="size-5" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
