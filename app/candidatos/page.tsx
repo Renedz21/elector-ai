@@ -4,12 +4,8 @@ import { CandidateList } from "@/components/shared/candidate-list";
 import { CandidateFilters } from "@/components/shared/candidate-filters";
 import { CandidatePagination } from "@/components/shared/candidate-pagination";
 import { LoadingState } from "@/components/shared/loading-state";
-import {
-  getPartidos,
-  getCargos,
-  getRegiones,
-  getCandidates,
-} from "@/lib/services/candidates";
+import { getCandidates } from "@/lib/services/candidates";
+import { CARGOS, PARTIDOS, REGIONES } from "@/lib/constants";
 
 type SearchParams = Promise<{
   partido?: string;
@@ -34,12 +30,7 @@ async function CandidatosContent({ searchParams }: Props) {
     search: params.search,
   };
 
-  const [partidos, cargos, regiones, candidatesResponse] = await Promise.all([
-    getPartidos(),
-    getCargos(),
-    getRegiones(),
-    getCandidates(filters, { page, limit: 24 }),
-  ]);
+  const candidatesResponse = await getCandidates(filters, { page, limit: 24 });
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -48,9 +39,9 @@ async function CandidatosContent({ searchParams }: Props) {
         description="Conoce a los candidatos presidenciales y congresales para las elecciones generales de Perú 2026."
       />
       <CandidateFilters
-        partidos={partidos}
-        cargos={cargos}
-        regiones={regiones}
+        partidos={[...PARTIDOS]}
+        cargos={[...CARGOS]}
+        regiones={[...REGIONES]}
       />
       <Suspense fallback={<LoadingState />}>
         <CandidateList

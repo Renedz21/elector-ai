@@ -24,7 +24,7 @@ type CandidateFiltersProps = {
 type FilterSelectProps = {
   id: string;
   label: string;
-  value: string;
+  value: string | undefined;
   options: string[];
   placeholder: string;
   onChange: (value: string) => void;
@@ -41,7 +41,7 @@ function FilterSelect({
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <Select value={value || undefined} onValueChange={onChange}>
+      <Select value={value} onValueChange={onChange}>
         <SelectTrigger id={id} className="w-full">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -73,9 +73,9 @@ export function CandidateFilters({
     debounceMs: 500,
   });
 
-  const partido = getParam("partido");
-  const cargo = getParam("cargo");
-  const region = getParam("region");
+  const partido = getParam("partido") || undefined;
+  const cargo = getParam("cargo") || undefined;
+  const region = getParam("region") || undefined;
 
   const hasActiveFilters = search || partido || cargo || region;
 
@@ -103,6 +103,7 @@ export function CandidateFilters({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <FilterSelect
+              key={`partido-${partido || "empty"}`}
               id="partido-filter"
               label="Partido"
               value={partido}
@@ -112,6 +113,7 @@ export function CandidateFilters({
             />
 
             <FilterSelect
+              key={`cargo-${cargo || "empty"}`}
               id="cargo-filter"
               label="Cargo"
               value={cargo}
@@ -121,6 +123,7 @@ export function CandidateFilters({
             />
 
             <FilterSelect
+              key={`region-${region || "empty"}`}
               id="region-filter"
               label="Región"
               value={region}

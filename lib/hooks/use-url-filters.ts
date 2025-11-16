@@ -7,7 +7,10 @@ type UseUrlFiltersOptions = {
   debounceMs?: number;
 };
 
-export function useUrlFilters({ basePath, debounceMs = 500 }: UseUrlFiltersOptions) {
+export function useUrlFilters({
+  basePath,
+  debounceMs = 500,
+}: UseUrlFiltersOptions) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -15,16 +18,28 @@ export function useUrlFilters({ basePath, debounceMs = 500 }: UseUrlFiltersOptio
   const getParam = (key: string) => searchParams.get(key) || "";
 
   const setParam = (key: string, value: string | undefined) => {
+    // Check if the value has actually changed to prevent unnecessary navigation
+    const currentValue = searchParams.get(key) || "";
+    const newValue = value?.trim() || "";
+
+    if (currentValue === newValue) {
+      return; // No change, don't navigate
+    }
+
     startTransition(() => {
       const params = new URLSearchParams(searchParams.toString());
-      
+
       if (value?.trim()) {
         params.set(key, value.trim());
       } else {
         params.delete(key);
       }
-      
-      params.delete("page");
+
+      // Only reset to page 1 when filter parameters change, not when setting the page itself
+      if (key !== "page") {
+        params.delete("page");
+      }
+
       router.push(`${basePath}?${params.toString()}`);
     });
   };
@@ -59,4 +74,3 @@ export function useDebouncedUrlFilter(
 
   return debouncedValue;
 }
-
