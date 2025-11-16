@@ -1,11 +1,9 @@
 import { PageHeader } from "@/components/shared/page-header";
-import { CalendarEventCard } from "@/components/shared/calendar-event-card";
-import { calendarEvents } from "@/lib/dummy-data";
+import { getAllCalendarEvents } from "@/lib/services/calendar-events";
+import { CalendarEventsClient } from "@/components/shared/calendar-events-client";
 
-export default function CalendarioPage() {
-  const sortedEvents = [...calendarEvents].sort(
-    (a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime(),
-  );
+export default async function CalendarioPage() {
+  const events = await getAllCalendarEvents();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
@@ -13,11 +11,7 @@ export default function CalendarioPage() {
         title="Calendario Electoral 2026"
         description="Fechas clave del proceso electoral desde la inscripción de candidatos hasta la proclamación de resultados."
       />
-      <div className="space-y-3 sm:space-y-4">
-        {sortedEvents.map((event) => (
-          <CalendarEventCard key={event.id} event={event} />
-        ))}
-      </div>
+      <CalendarEventsClient initialEvents={events} />
     </div>
   );
 }

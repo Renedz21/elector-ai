@@ -13,7 +13,7 @@ export default function ElectoresPage() {
         description="Encuentra toda la información que necesitas para ejercer tu derecho al voto de manera informada y segura."
       />
 
-      <div className="space-y-6 sm:space-y-8">
+      <div className="space-y-6">
         <VotingLocationFinder />
 
         <MesaFinder />

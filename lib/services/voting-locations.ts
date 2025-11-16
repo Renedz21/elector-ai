@@ -1,8 +1,27 @@
-import { dummyVotingLocations } from "@/lib/dummy-data";
+import { createClient } from "@/utils/supabase/client";
 import type { VotingLocation, VotingLocationWithDistance } from "@/lib/types";
 
 export async function getAllVotingLocations(): Promise<VotingLocation[]> {
-  return dummyVotingLocations;
+  const supabase = createClient();
+  const { data, error } = await supabase.from("voting_locations").select("*");
+
+  if (error) {
+    console.error("Error fetching voting locations:", error);
+    return [];
+  }
+
+  return (
+    data?.map((loc) => ({
+      id: loc.id,
+      name: loc.name,
+      address: loc.address,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      district: loc.district,
+      created_at: loc.created_at ?? undefined,
+      updated_at: loc.updated_at ?? undefined,
+    })) ?? []
+  );
 }
 
 export function calculateDistance(
@@ -37,22 +56,23 @@ export async function findNearestLocations(
   userLon: number,
   limit: number = 3,
 ): Promise<VotingLocationWithDistance[]> {
-  const locations = await getAllVotingLocations();
+  try {
+    const response = await fetch("/api/locales/nearby", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ lat: userLat, lng: userLon, limit }),
+    });
 
-  const locationsWithDistance: VotingLocationWithDistance[] = locations.map(
-    (location) => ({
-      ...location,
-      distance: calculateDistance(
-        userLat,
-        userLon,
-        Number(location.latitude),
-        Number(location.longitude),
-      ),
-    }),
-  );
+    if (!response.ok) {
+      throw new Error("Error al buscar locales cercanos");
+    }
 
-  return locationsWithDistance
-    .sort((a, b) => a.distance - b.distance)
-    .slice(0, limit);
+    return await response.json();
+  } catch (error) {
+    console.error("Error in findNearestLocations:", error);
+    throw error;
+  }
 }
 

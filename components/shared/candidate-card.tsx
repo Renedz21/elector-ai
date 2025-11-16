@@ -1,39 +1,52 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { Candidate } from "@/lib/types";
+import type { CandidateRow } from "@/lib/services/candidates";
 
 type CandidateCardProps = {
-  candidate: Candidate;
+  candidate: CandidateRow;
 };
 
 export function CandidateCard({ candidate }: CandidateCardProps) {
   return (
     <Link href={`/candidatos/${candidate.id}`}>
-      <Card className="transition-shadow hover:shadow-lg h-full">
-        <CardHeader className="p-4 sm:p-6">
-          <div className="space-y-2 sm:space-y-3">
-            <CardTitle className="text-lg sm:text-xl leading-tight">
-              {candidate.nombre}
-            </CardTitle>
+      <Card className="hover:shadow-md h-full">
+        <CardHeader>
+          <div className="space-y-2">
+            <CardTitle>{candidate.nombre}</CardTitle>
             <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="text-xs sm:text-sm">
+              <Badge variant="secondary" className="text-xs">
                 {candidate.cargo}
               </Badge>
-              <Badge variant="outline" className="text-xs sm:text-sm">
-                {candidate.region}
-              </Badge>
+              {candidate.region && candidate.region !== "unknown" && (
+                <Badge variant="outline" className="text-xs">
+                  {candidate.region}
+                </Badge>
+              )}
+              {candidate.tipo_candidato && (
+                <Badge variant="outline" className="text-xs">
+                  {candidate.tipo_candidato}
+                </Badge>
+              )}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0">
-          <div className="space-y-2 sm:space-y-3">
-            <p className="text-xs sm:text-sm font-medium text-muted-foreground">
+        <CardContent>
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-muted-foreground">
               {candidate.partido}
             </p>
-            <p className="text-xs sm:text-sm line-clamp-3 sm:line-clamp-4 leading-relaxed">
-              {candidate.hoja_vida}
-            </p>
+            {candidate.numero_lista && (
+              <p className="text-sm text-muted-foreground">
+                Lista {candidate.numero_lista}
+                {candidate.orden && ` - Orden ${candidate.orden}`}
+              </p>
+            )}
+            {candidate.hoja_vida && (
+              <p className="text-sm line-clamp-3 leading-relaxed">
+                {candidate.hoja_vida}
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

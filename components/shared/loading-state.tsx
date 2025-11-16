@@ -21,10 +21,10 @@ export function LoadingCards({ count = 3 }: { count?: number }) {
 
 export function LoadingList({ count = 5 }: { count?: number }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {Array.from({ length: count }).map((_, i) => (
         <Card key={i}>
-          <CardContent className="p-6">
+          <CardContent>
             <div className="space-y-3">
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-full" />
@@ -35,4 +35,8 @@ export function LoadingList({ count = 5 }: { count?: number }) {
       ))}
     </div>
   );
+}
+
+export function LoadingState() {
+  return <LoadingCards count={6} />;
 }

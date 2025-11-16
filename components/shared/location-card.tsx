@@ -51,54 +51,48 @@ export function LocationCard({ title, description }: LocationCardProps) {
 
   return (
     <Card>
-      <CardHeader className="p-4 sm:p-6">
-        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-          <MapPin className="size-4 sm:size-5" />
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="size-5" />
           {title}
         </CardTitle>
         {description && (
-          <p className="text-xs sm:text-sm text-muted-foreground mt-2">
-            {description}
-          </p>
+          <p className="text-sm text-muted-foreground mt-2">{description}</p>
         )}
       </CardHeader>
-      <CardContent className="p-4 sm:p-6 pt-0 space-y-4">
-        <Button
-          onClick={getLocation}
-          disabled={loading}
-          className="w-full sm:w-auto"
-        >
-          <Navigation className="size-4 mr-2" />
-          {loading ? "Obteniendo ubicación..." : "Obtener mi ubicación"}
-        </Button>
+      <CardContent>
+        <div className="space-y-4">
+          <Button onClick={getLocation} disabled={loading} className="w-full sm:w-auto">
+            <Navigation className="size-4 mr-2" />
+            {loading ? "Obteniendo ubicación..." : "Obtener mi ubicación"}
+          </Button>
 
-        {error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-xs sm:text-sm text-destructive">
-            {error}
-          </div>
-        )}
-
-        {coordinates && (
-          <div className="space-y-3 rounded-md border bg-muted/50 p-3 sm:p-4">
-            <div className="space-y-1">
-              <p className="text-xs sm:text-sm font-medium">
-                Coordenadas obtenidas:
-              </p>
-              <p className="font-mono text-xs sm:text-sm break-all">
-                Lat: {coordinates.lat.toFixed(6)}, Lng:{" "}
-                {coordinates.lng.toFixed(6)}
-              </p>
+          {error && (
+            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
             </div>
-            <Button
-              onClick={openGoogleMaps}
-              variant="outline"
-              className="w-full sm:w-auto"
-            >
-              <ExternalLink className="size-4 mr-2" />
-              Abrir en Google Maps
-            </Button>
-          </div>
-        )}
+          )}
+
+          {coordinates && (
+            <div className="space-y-3 rounded-md border bg-muted/50 p-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium">Coordenadas obtenidas:</p>
+                <p className="font-mono text-sm break-all">
+                  Lat: {coordinates.lat.toFixed(6)}, Lng:{" "}
+                  {coordinates.lng.toFixed(6)}
+                </p>
+              </div>
+              <Button
+                onClick={openGoogleMaps}
+                variant="outline"
+                className="w-full sm:w-auto"
+              >
+                <ExternalLink className="size-4 mr-2" />
+                Abrir en Google Maps
+              </Button>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

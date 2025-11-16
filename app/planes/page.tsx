@@ -1,13 +1,18 @@
 import { PageHeader } from "@/components/shared/page-header";
-import { PlanCard } from "@/components/shared/plan-card";
-import { plans } from "@/lib/dummy-data";
+import { getAllPlans } from "@/lib/services/plans";
+import { PlanList } from "@/components/shared/plan-list";
 
-export default function PlanesPage() {
-  const sortedPlans = [...plans].sort(
-    (a, b) =>
-      new Date(b.fecha_publicacion).getTime() -
-      new Date(a.fecha_publicacion).getTime(),
-  );
+function getAllUniqueTopics(plans: Awaited<ReturnType<typeof getAllPlans>>): string[] {
+  const topics = new Set<string>();
+  plans.forEach((plan) => {
+    plan.temas_principales.forEach((tema) => topics.add(tema));
+  });
+  return Array.from(topics).sort();
+}
+
+export default async function PlanesPage() {
+  const plans = await getAllPlans();
+  const allTopics = getAllUniqueTopics(plans);
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
@@ -15,11 +20,7 @@ export default function PlanesPage() {
         title="Planes de Gobierno"
         description="Resúmenes generados con IA de los planes de gobierno presentados por los partidos políticos para las elecciones 2026."
       />
-      <div className="space-y-4 sm:space-y-6">
-        {sortedPlans.map((plan) => (
-          <PlanCard key={plan.id} plan={plan} />
-        ))}
-      </div>
+      <PlanList plans={plans} allTopics={allTopics} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,14 +10,23 @@ type SearchBarProps = {
   onSearch: (query: string) => void;
   placeholder?: string;
   isLoading?: boolean;
+  initialValue?: string;
 };
 
 export function SearchBar({
   onSearch,
   placeholder = "Pregunta sobre las elecciones 2026...",
   isLoading = false,
+  initialValue = "",
 }: SearchBarProps) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialValue);
+
+  // Actualizar el valor cuando cambie initialValue
+  useEffect(() => {
+    if (initialValue) {
+      setQuery(initialValue);
+    }
+  }, [initialValue]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

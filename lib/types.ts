@@ -5,9 +5,14 @@ export type Candidate = {
   region: string;
   cargo: string;
   hoja_vida: string;
-  actividades: string[];
-  propuestas: string[];
-  imagen_url?: string;
+  actividades: string[] | null;
+  propuestas: string[] | null;
+  imagen_url?: string | null;
+  numero_lista?: number | null;
+  orden?: number | null;
+  tipo_candidato?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 };
 
 export type Plan = {
